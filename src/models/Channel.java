@@ -56,6 +56,11 @@ public class Channel implements Comparable<Channel>, Sendable, Serializable {
    public int compareTo(Channel o) {
       return this.name.compareTo(o.name);
    }
+
+   @Override
+   public String toString() {
+      return this.name;
+   }
 }
 
 

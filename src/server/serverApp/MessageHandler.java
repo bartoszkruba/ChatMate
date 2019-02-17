@@ -85,6 +85,7 @@ public class MessageHandler implements Runnable {
          User u = ActiveUserController.getInstance().getUser(userID);
          if (u != null) {
             ActiveChannelController.getInstance().addUserToChannel(u, channel);
+            sendToUser(u, ActiveChannelController.getInstance().getChannel(channel));
             sendToChannel(m);
          }
       }
@@ -100,10 +101,13 @@ public class MessageHandler implements Runnable {
    }
 
    private void sendToUser(Message m) {
-      System.out.println("Sending whisper message to " + m.RECEIVER);
+      System.out.println("Sending message to " + m.RECEIVER);
       LinkedBlockingDeque<Message> outbox = ActiveUserController.getInstance().getUserOutbox(m.RECEIVER);
       outbox.add(m);
    }
 
+   private void sendToUser(User u, Sendable s) {
+      ActiveUserController.getInstance().getUserOutbox(u).add(s);
+   }
 
 }

@@ -45,7 +45,7 @@
                 <Button fx:id="joinRoomBtn" text="Join" onAction="#joinRoomBtnPressed"/>
             </HBox>
             <Label text="Rooms:"/>
-            <ListView>
+            <ListView fx:id="channelList">
 
             </ListView>
         </VBox>

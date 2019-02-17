@@ -5,6 +5,7 @@ import client.Main;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import models.Channel;
 import models.Message;
 import models.MessageType;
 import models.Sendable;
@@ -51,6 +52,15 @@ public class MessageInboxHandler extends Thread {
                   if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
                      controller.textArea.appendText("\n" + "User " + m.SENDER + " joined channel " + m.CHANNEL);
                   }
+            }
+         } else if (s instanceof Channel) {
+            try {
+               controller.channels.add((Channel) s);
+               if (controller.channels.size() == 1) {
+                  controller.channelList.getSelectionModel().selectFirst();
+               }
+            } catch (IllegalStateException e) {
+
             }
          }
       }
