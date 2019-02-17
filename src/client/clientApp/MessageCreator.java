@@ -10,38 +10,11 @@ import javafx.scene.paint.Paint;
 import models.Message;
 
 
-public class MessageCreator{
-    Controller controller;
+public class MessageCreator {
 
-    public MessageCreator() {
-        controller = (client.Controller) Main.primaryStage.getUserData();
-    }
+   public MessageCreator() {
 
-    public Label labelCreator(String text, Paint color, String id) {
-        Label label = new Label();
-        label.setText(text);
-        label.setTextFill(color);
-        label.setId(id);
-        label.setWrapText(true);
-        return label;
-    }
+   }
 
-    @FXML
-    public void channelMessage(Message message) {
-        Label channelMessage = labelCreator(message.NICKNAME + ": " + message.TEXT_CONTENT, Color.BLACK, "channel_message");
-        controller.getChatBox().getChildren().add(channelMessage);
-    }
-
-    @FXML
-    public void warningMessage(Message message) {
-        Label warningLabel = labelCreator("Warning: " + message.TEXT_CONTENT, Color.RED, "warning");
-        controller.getChatBox().getChildren().add(warningLabel);
-    }
-
-    @FXML
-    public void joinChannelMessage(Message message) {
-        Label joinMessage = labelCreator(message.SENDER +" has joined the channel.", Color.GREEN, "join_channel");
-        controller.getChatBox().getChildren().add(joinMessage);
-    }
 
 }
