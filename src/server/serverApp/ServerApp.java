@@ -2,6 +2,7 @@ package server.serverApp;
 
 
 import models.Message;
+import models.Sendable;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -20,7 +21,7 @@ public class ServerApp {
    private ExecutorService clientHandlers;
    private MessageHandler messageHandler;
    private boolean running = false;
-   private final LinkedBlockingQueue<Message> messageHandlerQueue;
+   private final LinkedBlockingQueue<Sendable> messageHandlerQueue;
 
    public ServerApp() {
       try {

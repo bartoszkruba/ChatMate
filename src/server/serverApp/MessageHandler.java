@@ -3,6 +3,7 @@ package server.serverApp;
 
 import models.Channel;
 import models.Message;
+import models.Sendable;
 import models.User;
 
 import java.util.SortedSet;
@@ -12,9 +13,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class MessageHandler implements Runnable {
 
-   private LinkedBlockingQueue<Message> messages;
+   private LinkedBlockingQueue<Sendable> messages;
 
-   public MessageHandler(LinkedBlockingQueue<Message> messages) {
+   public MessageHandler(LinkedBlockingQueue<Sendable> messages) {
       this.messages = messages;
    }
 
@@ -34,22 +35,26 @@ public class MessageHandler implements Runnable {
    }
 
    private void processMessages() {
-      Message m = this.messages.remove();
-      switch (m.TYPE) {
-         case DISCONNECT:
-            sendToChannel(m);
-            break;
-         case CHANNEL_MESSAGE:
-            sendToChannel(m);
-            break;
-         case JOIN_CHANNEL:
-            addUserToChannel(m);
-            break;
-         case LEAVE_CHANNEL:
-            removeUserFromChannel(m);
-            break;
-         case WHISPER_MESSAGE:
-            sendToUser(m);
+      Sendable s = this.messages.remove();
+      if (s instanceof Message) {
+         Message m = (Message) s;
+
+         switch (m.TYPE) {
+            case DISCONNECT:
+               sendToChannel(m);
+               break;
+            case CHANNEL_MESSAGE:
+               sendToChannel(m);
+               break;
+            case JOIN_CHANNEL:
+               addUserToChannel(m);
+               break;
+            case LEAVE_CHANNEL:
+               removeUserFromChannel(m);
+               break;
+            case WHISPER_MESSAGE:
+               sendToUser(m);
+         }
       }
    }
 

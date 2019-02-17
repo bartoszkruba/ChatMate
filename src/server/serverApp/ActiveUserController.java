@@ -1,6 +1,7 @@
 package server.serverApp;
 
 import models.Message;
+import models.Sendable;
 import models.User;
 
 import java.io.Serializable;
@@ -18,12 +19,12 @@ public class ActiveUserController {
       return ourInstance;
    }
 
-   private ConcurrentHashMap<User, LinkedBlockingDeque<Message>> connectedUsers = new ConcurrentHashMap<>();
+   private ConcurrentHashMap<User, LinkedBlockingDeque<Sendable>> connectedUsers = new ConcurrentHashMap<>();
 
    private ActiveUserController() {
    }
 
-   public boolean addUser(User user, LinkedBlockingDeque<Message> outbox) {
+   public boolean addUser(User user, LinkedBlockingDeque<Sendable> outbox) {
       if (this.connectedUsers.containsKey(user)) {
          return false;
       }
@@ -37,7 +38,7 @@ public class ActiveUserController {
       return this.connectedUsers.remove(user) != null;
    }
 
-   public LinkedBlockingDeque<Message> getUserOutbox(User user) {
+   public LinkedBlockingDeque<Sendable> getUserOutbox(User user) {
       return connectedUsers.get(user);
    }
 

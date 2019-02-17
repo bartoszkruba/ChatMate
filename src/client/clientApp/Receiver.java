@@ -37,12 +37,7 @@ public class Receiver extends Thread {
       while (Client.getInstance().isRunning) {
          try {
             Sendable inData = (Sendable) objectInputStream.readObject();
-
-            if (inData instanceof Message) {
-               Message message = (Message) inData;
-            } else if (inData instanceof Channel) {
-
-            }
+            Client.getInstance().getMessageHandlerQueue().add(inData);
          } catch (IOException e) {
             System.out.println("Read Error");
             Client.getInstance().isRunning = false;

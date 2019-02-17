@@ -2,6 +2,7 @@ package server.serverApp;
 
 import models.Message;
 import models.MessageType;
+import models.Sendable;
 import models.User;
 
 import java.io.IOException;
@@ -22,10 +23,10 @@ public class ClientHandler implements Runnable {
    private boolean isRunning = false;
    private final int TIMEOUT_MS = 50;
    private final User user;
-   private final LinkedBlockingDeque<Message> userOutbox;
-   private final LinkedBlockingQueue<Message> messageHandlerQueue;
+   private final LinkedBlockingDeque<Sendable> userOutbox;
+   private final LinkedBlockingQueue<Sendable> messageHandlerQueue;
 
-   public ClientHandler(Socket socket, ServerApp serverApp, LinkedBlockingQueue<Message> messageHandlerQueue) {
+   public ClientHandler(Socket socket, ServerApp serverApp, LinkedBlockingQueue<Sendable> messageHandlerQueue) {
       this.socket = socket;
       this.serverApp = serverApp;
       this.user = new User("Unknown");
@@ -58,10 +59,13 @@ public class ClientHandler implements Runnable {
    private void readMessage() {
       // TODO: 2019-02-14 try reconnect 
       try {
-         Message message = (Message) streamIn.readObject();
-         message.SENDER = this.user.getID();
-         // System.out.println(message);//Debug
-         messageHandlerQueue.add(message);
+         Object object = streamIn.readObject();
+         if (object instanceof Message) {
+            Message message = (Message) object;
+            message.SENDER = this.user.getID();
+            // System.out.println(message);//Debug
+            messageHandlerQueue.add(message);
+         }
       } catch (SocketTimeoutException e) {
       } catch (IOException e) {
          // Kolla om möjlig återanslutning till server
@@ -79,9 +83,11 @@ public class ClientHandler implements Runnable {
       int stop = 1;
       for (int i = 0; i < stop; i++) {
          if (clientHasMessages()) {
-            Message m = this.userOutbox.getFirst();
+            Sendable m = this.userOutbox.getFirst();
             try {
                streamOut.writeObject(m);
+
+               // TODO: 2019-02-17 Bug - Removing first message from stack is not always right should check index instead
                this.userOutbox.removeFirst();
                i = 10;
             } catch (IOException e) {

@@ -1,6 +1,7 @@
 package client.clientApp;
 
 import models.Message;
+import models.Sendable;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -23,7 +24,7 @@ public class Sender extends Thread {
       }
    }
 
-   public void sendToServer(Object o) {
+   public void sendToServer(Sendable o) {
       try {
          objectOutputStream.writeObject(o);
       } catch (IOException e) {
@@ -35,7 +36,9 @@ public class Sender extends Thread {
    public void run() {
       while (Client.getInstance().isRunning) {
          try {
-            objectOutputStream.writeObject(new Message());
+            while (Client.getInstance().getSenderQueue().size() > 0) {
+               sendToServer(Client.getInstance().getSenderQueue().removeFirst());
+            }
             Thread.sleep(100);
          } catch (Exception e) {
 

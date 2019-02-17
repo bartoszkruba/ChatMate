@@ -1,6 +1,7 @@
 package client.clientApp;
 
 import models.Message;
+import models.Sendable;
 import models.User;
 
 import java.net.Socket;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Client {
    private static Client ourInstance = new Client();
@@ -25,7 +27,8 @@ public class Client {
    private ConcurrentHashMap<String, ArrayList<Message>> channelMessages;
    private String currentChannel;
    private String nickname;
-
+   private LinkedBlockingDeque<Sendable> messageHandlerQueue;
+   private LinkedBlockingDeque<Sendable> senderQueue;
 
    private Client() {
       try {
@@ -68,5 +71,21 @@ public class Client {
 
    public void setCurrentChannel(String currentChannel) {
       this.currentChannel = currentChannel;
+   }
+
+   public LinkedBlockingDeque<Sendable> getMessageHandlerQueue() {
+      return messageHandlerQueue;
+   }
+
+   public void setMessageHandlerQueue(LinkedBlockingDeque<Sendable> messageHandlerQueue) {
+      this.messageHandlerQueue = messageHandlerQueue;
+   }
+
+   public LinkedBlockingDeque<Sendable> getSenderQueue() {
+      return senderQueue;
+   }
+
+   public void setSenderQueue(LinkedBlockingDeque<Sendable> senderQueue) {
+      this.senderQueue = senderQueue;
    }
 }
