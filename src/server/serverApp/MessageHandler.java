@@ -80,7 +80,6 @@ public class MessageHandler implements Runnable {
          User u = ActiveUserController.getInstance().getUser(userID);
          if (u != null) {
             ActiveChannelController.getInstance().addUserToChannel(u, channel);
-//            ActiveUserController.getInstance().getUserOutbox(u).add(ActiveChannelController.getInstance().getChannel(channel));
             sendToChannel(m);
          }
       }
@@ -90,7 +89,7 @@ public class MessageHandler implements Runnable {
    private void removeUserFromChannel(Message m) {
       if (m.SENDER != null && m.CHANNEL != null && !m.CHANNEL.equals("")) {
          this.sendToChannel(m);
-         System.out.println(ActiveChannelController.getInstance().removeUserFromChannel(m.SENDER, m.CHANNEL) == true ? m.SENDER + " removed from channel " : "");
+         ActiveChannelController.getInstance().getChannel(m.CHANNEL).removeUser(ActiveUserController.getInstance().getUser(m.SENDER));
          System.out.println("Users connected to " + m.CHANNEL + ": " + ActiveChannelController.getInstance().getChannel(m.CHANNEL).getUsers().size());
       }
    }

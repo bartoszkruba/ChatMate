@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ServerApp {
 
    private ServerSocket serverSocket;
-   private final int PORT = 54322;
+   private final int PORT = 54321;
    private ExecutorService clientHandlers;
    private MessageHandler messageHandler;
    private boolean running = false;
