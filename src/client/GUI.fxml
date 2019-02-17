@@ -12,14 +12,12 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
             prefWidth="902.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.Controller">
-
-
     <center>
         <VBox>
             <TextArea fx:id="textArea"
                       VBox.vgrow="ALWAYS" wrapText="true" editable="false"/>
             <HBox alignment="CENTER">
-                <TextField fx:id="chattField" prefWidth="650" onKeyPressed="#handleKeyPresseddOnChattField" />
+                <TextField fx:id="chattField" prefWidth="650" onKeyPressed="#handleKeyPresseddOnChattField"/>
                 <Button fx:id="sendButton" text="Send" onAction="#sendButtonPressed"/>
             </HBox>
         </VBox>

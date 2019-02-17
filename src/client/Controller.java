@@ -2,6 +2,8 @@ package client;
 
 import client.clientApp.Client;
 import client.clientApp.MessageInboxHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -31,7 +33,7 @@ public class Controller {
    private TextField roomField;
 
    @FXML
-   public ListView channelList;
+   public ListView<Channel> channelList;
 
    private LinkedBlockingDeque<Sendable> messageHandlerQueue;
    private LinkedBlockingDeque<Sendable> senderQueue;
@@ -52,6 +54,15 @@ public class Controller {
 
       channelList.setItems(sortedList);
       channelList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+      channelList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Channel>() {
+         @Override
+         public void changed(ObservableValue<? extends Channel> observable, Channel oldValue, Channel newValue) {
+            client.setCurrentChannel(newValue.getName());
+            textArea.clear();
+            client.getChannelMessages().get(newValue.getName()).forEach(textArea::appendText);
+         }
+      });
 
    }
 

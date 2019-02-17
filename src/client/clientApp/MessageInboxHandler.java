@@ -38,19 +38,21 @@ public class MessageInboxHandler extends Thread {
          if (s instanceof Message) {
             Message m = (Message) s;
             switch (m.TYPE) {
-               case CHANNEL_MESSAGE:
+               case CHANNEL_MESSAGE: {
+                  String message = "\n" + m.TEXT_CONTENT;
+                  Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                   if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                     String message = "\n" + m.TEXT_CONTENT;
                      controller.textArea.appendText(message);
-                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                   }
                   break;
-               case JOIN_CHANNEL:
+               }
+               case JOIN_CHANNEL: {
+                  String message = "\n" + m.SENDER + " joined";
+                  Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                   if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                     String message = "\n" + m.SENDER + " joined";
                      controller.textArea.appendText(message);
-                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                   }
+               }
             }
          } else if (s instanceof Channel) {
             try {
