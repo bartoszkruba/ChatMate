@@ -23,14 +23,57 @@ public class Controller {
 
    Client client;
 
+   @FXML
+   public TextArea textArea;
+
+   @FXML
+   public TextField chattField;
+
+   @FXML
+   public Button sendButton;
+
+   @FXML
+   private TextField roomField;
+
+   @FXML
+   private Button joinRoomBtn;
+
+   private LinkedBlockingDeque<Sendable> messageHandlerQueue;
+   private LinkedBlockingDeque<Sendable> senderQueue;
 
    public void initialize() {
       client = Client.getInstance();
-      LinkedBlockingDeque<Sendable> messageHandlerQueue = new LinkedBlockingDeque<Sendable>();
-      LinkedBlockingDeque<Sendable> senderQueue = new LinkedBlockingDeque<>();
+      messageHandlerQueue = new LinkedBlockingDeque<>();
+      senderQueue = new LinkedBlockingDeque<>();
       client.setMessageHandlerQueue(messageHandlerQueue);
       client.setSenderQueue(senderQueue);
       new MessageInboxHandler(messageHandlerQueue, senderQueue, this).start();
+   }
+
+   @FXML
+   private void joinRoomBtnPressed() {
+      String channel = roomField.getText();
+      if (!channel.trim().equals("")) {
+         Sendable message = new Message(MessageType.JOIN_CHANNEL);
+         ((Message) message).CHANNEL = channel;
+         senderQueue.add(message);
+         if (client.getCurrentChannel() == null) {
+            client.setCurrentChannel(channel);
+         }
+         roomField.clear();
+      }
+   }
+
+   @FXML
+   private void sendButtonPressed() {
+      String content = chattField.getText();
+      if (!content.trim().equals("")) {
+         Sendable message = new Message(MessageType.CHANNEL_MESSAGE);
+         ((Message) message).CHANNEL = client.getCurrentChannel();
+         ((Message) message).TEXT_CONTENT = content;
+         senderQueue.add(message);
+         chattField.clear();
+      }
    }
 
 
