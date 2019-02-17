@@ -9,15 +9,20 @@
 
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.geometry.Insets?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
             prefWidth="902.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.Controller">
     <center>
         <VBox>
+            <BorderPane.margin>
+                <Insets bottom="9.0" left="4.0" right="4.0" top="9.0"/>
+            </BorderPane.margin>
             <TextArea fx:id="textArea"
                       VBox.vgrow="ALWAYS" wrapText="true" editable="false"/>
             <HBox alignment="CENTER">
-                <TextField fx:id="chattField" prefWidth="650" onKeyPressed="#handleKeyPresseddOnChattField"/>
+                <TextField fx:id="chattField" onKeyPressed="#handleKeyPresseddOnChattField"
+                           HBox.hgrow="ALWAYS"/>
                 <Button fx:id="sendButton" text="Send" onAction="#sendButtonPressed"/>
             </HBox>
         </VBox>
@@ -25,9 +30,12 @@
 
     <right>
         <VBox>
+            <BorderPane.margin>
+                <Insets bottom="9.0" left="4.0" right="9.0" top="9.0"/>
+            </BorderPane.margin>
             <Label text="Change name"/>
             <HBox>
-                <TextField/>
+                <TextField HBox.hgrow="ALWAYS"/>
                 <Button text="Change"/>
             </HBox>
             <Label text="Users"/>
@@ -38,9 +46,13 @@
 
     <left>
         <VBox>
+            <BorderPane.margin>
+                <Insets bottom="9.0" left="9.0" right="4.0" top="9.0"/>
+            </BorderPane.margin>
             <Label text="Join Room"/>
             <HBox>
-                <TextField fx:id="roomField" onKeyPressed="#handleKeyPresseddOnRoomField"/>
+                <TextField fx:id="roomField" onKeyPressed="#handleKeyPresseddOnRoomField"
+                           HBox.hgrow="ALWAYS"/>
                 <Button fx:id="joinRoomBtn" text="Join" onAction="#joinRoomBtnPressed"/>
             </HBox>
             <Label text="Rooms:"/>

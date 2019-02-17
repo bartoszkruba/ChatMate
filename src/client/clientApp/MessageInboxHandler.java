@@ -47,11 +47,20 @@ public class MessageInboxHandler extends Thread {
                   break;
                }
                case JOIN_CHANNEL: {
-                  String message = "\n" + m.SENDER + " joined";
+                  String message = "\n" + m.TEXT_CONTENT + " joined";
                   Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                   if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
                      controller.textArea.appendText(message);
                   }
+                  break;
+               }
+               case DISCONNECT: {
+                  String message = "\n" + m.TEXT_CONTENT + " disconnected";
+                  Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
+                  if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                     controller.textArea.appendText(message);
+                  }
+                  break;
                }
             }
          } else if (s instanceof Channel) {

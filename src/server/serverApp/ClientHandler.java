@@ -127,6 +127,7 @@ public class ClientHandler implements Runnable {
          Message message = new Message(MessageType.DISCONNECT);
          message.CHANNEL = c;
          message.SENDER = this.user.getID();
+         message.TEXT_CONTENT = this.user.getNickName();
          this.messageHandlerQueue.add(message);
       });
       ActiveUserController.getInstance().removeUser(this.user);

@@ -86,6 +86,7 @@ public class MessageHandler implements Runnable {
          if (u != null) {
             ActiveChannelController.getInstance().addUserToChannel(u, channel);
             sendToUser(u, ActiveChannelController.getInstance().getChannel(channel));
+            m.TEXT_CONTENT = u.getNickName();
             sendToChannel(m);
          }
       }
