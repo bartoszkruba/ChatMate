@@ -21,7 +21,7 @@ public class Main extends Application {
 
       primaryStage.setOnCloseRequest(e -> Client.getInstance().kill());
       primaryStage.setTitle("Chatter Matter");
-      primaryStage.setScene(new Scene(root, 900, 600));
+      primaryStage.setScene(new Scene(root, 1200, 600));
       primaryStage.show();
    }
 

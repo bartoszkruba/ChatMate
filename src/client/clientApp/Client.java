@@ -23,8 +23,8 @@ public class Client {
    Socket socket;
    public Sender sender;
    public Receiver reciever;
-   public ConcurrentSkipListMap<String, ConcurrentSkipListSet<User>> channelList;
-   private ConcurrentHashMap<String, ArrayList<Message>> channelMessages;
+   public ConcurrentSkipListMap<String, ConcurrentSkipListSet<User>> channelList = new ConcurrentSkipListMap<>();
+   private ConcurrentHashMap<String, ArrayList<String>> channelMessages = new ConcurrentHashMap<>();
    private String currentChannel;
    private String nickname;
    private LinkedBlockingDeque<Sendable> messageHandlerQueue;
@@ -57,13 +57,10 @@ public class Client {
       this.nickname = nickname;
    }
 
-   public ConcurrentHashMap<String, ArrayList<Message>> getChannelMessages() {
+   public ConcurrentHashMap<String, ArrayList<String>> getChannelMessages() {
       return channelMessages;
    }
 
-   public void setChannelMessages(ConcurrentHashMap<String, ArrayList<Message>> channelMessages) {
-      this.channelMessages = channelMessages;
-   }
 
    public String getCurrentChannel() {
       return currentChannel;

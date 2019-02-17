@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.GridPane?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
             prefWidth="902.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.Controller">
 
 
     <center>
-        <TextArea fx:id="textArea"
-                  VBox.vgrow="ALWAYS" wrapText="true" editable="false"/>
+        <VBox>
+            <TextArea fx:id="textArea"
+                      VBox.vgrow="ALWAYS" wrapText="true" editable="false"/>
+            <HBox alignment="CENTER">
+                <TextField fx:id="chattField" prefWidth="650" onKeyPressed="#handleKeyPresseddOnChattField" />
+                <Button fx:id="sendButton" text="Send" onAction="#sendButtonPressed"/>
+            </HBox>
+        </VBox>
     </center>
 
     <right>
@@ -32,7 +33,7 @@
                 <Button text="Change"/>
             </HBox>
             <Label text="Users"/>
-            <ListView>
+            <ListView VBox.vgrow="ALWAYS">
             </ListView>
         </VBox>
     </right>
@@ -41,23 +42,14 @@
         <VBox>
             <Label text="Join Room"/>
             <HBox>
-                <TextField fx:id="roomField"/>
+                <TextField fx:id="roomField" onKeyPressed="#handleKeyPresseddOnRoomField"/>
                 <Button fx:id="joinRoomBtn" text="Join" onAction="#joinRoomBtnPressed"/>
             </HBox>
             <Label text="Rooms:"/>
-            <ListView fx:id="channelList">
+            <ListView fx:id="channelList" VBox.vgrow="ALWAYS">
 
             </ListView>
         </VBox>
     </left>
-
-    <bottom>
-        <GridPane hgap="10" vgap="10" alignment="CENTER">
-            <TextField fx:id="chattField" GridPane.rowIndex="0" GridPane.columnSpan="50" GridPane.columnIndex="0"/>
-            <Button fx:id="sendButton" GridPane.rowIndex="0" GridPane.columnIndex="51" text="Send"
-                    onAction="#sendButtonPressed"/>
-        </GridPane>
-    </bottom>
-
 
 </BorderPane>

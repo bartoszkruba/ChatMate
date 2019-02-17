@@ -2,24 +2,16 @@ package client;
 
 import client.clientApp.Client;
 import client.clientApp.MessageInboxHandler;
-import client.clientApp.Sender;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.input.KeyEvent;
 import models.*;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class Controller {
@@ -71,9 +63,6 @@ public class Controller {
             Sendable message = new Message(MessageType.JOIN_CHANNEL);
             ((Message) message).CHANNEL = channel;
             senderQueue.add(message);
-            if (client.getCurrentChannel() == null) {
-               client.setCurrentChannel(channel);
-            }
          }
          roomField.clear();
       }
@@ -91,6 +80,19 @@ public class Controller {
       }
    }
 
+   @FXML
+   private void handleKeyPresseddOnRoomField(KeyEvent e) {
+      if (e.getCode().toString().equals("ENTER")) {
+         joinRoomBtnPressed();
+      }
+   }
+
+   @FXML
+   private void handleKeyPresseddOnChattField(KeyEvent e) {
+      if (e.getCode().toString().equals("ENTER")) {
+         sendButtonPressed();
+      }
+   }
 
 }
 

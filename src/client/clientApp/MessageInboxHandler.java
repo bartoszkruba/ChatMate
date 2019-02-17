@@ -1,15 +1,10 @@
 package client.clientApp;
 
 import client.Controller;
-import client.Main;
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import models.Channel;
-import models.Message;
-import models.MessageType;
-import models.Sendable;
+import models.*;
 
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class MessageInboxHandler extends Thread {
@@ -45,19 +40,27 @@ public class MessageInboxHandler extends Thread {
             switch (m.TYPE) {
                case CHANNEL_MESSAGE:
                   if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                     controller.textArea.appendText("\n" + m.CHANNEL + ": " + m.TEXT_CONTENT);
+                     String message = "\n" + m.TEXT_CONTENT;
+                     controller.textArea.appendText(message);
+                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                   }
                   break;
                case JOIN_CHANNEL:
                   if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                     controller.textArea.appendText("\n" + "User " + m.SENDER + " joined channel " + m.CHANNEL);
+                     String message = "\n" + m.SENDER + " joined";
+                     controller.textArea.appendText(message);
+                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                   }
             }
          } else if (s instanceof Channel) {
             try {
                controller.channels.add((Channel) s);
+               ArrayList<String> messages = Client.getInstance().getChannelMessages().getOrDefault(((Channel) s).getName(), new ArrayList<>());
+               Client.getInstance().getChannelMessages().put(((Channel) s).getName(), messages);
+               Client.getInstance().channelList.put(((Channel) s).getName(), new ConcurrentSkipListSet<>(((Channel) s).getUsers()));
                if (controller.channels.size() == 1) {
                   controller.channelList.getSelectionModel().selectFirst();
+                  Client.getInstance().setCurrentChannel(((Channel) s).getName());
                }
             } catch (IllegalStateException e) {
 
