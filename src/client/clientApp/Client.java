@@ -4,6 +4,7 @@ import models.Message;
 import models.Sendable;
 import models.User;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,10 +24,11 @@ public class Client {
    Socket socket;
    public Sender sender;
    public Receiver reciever;
-   public ConcurrentSkipListMap<String, ConcurrentSkipListSet<User>> channelList = new ConcurrentSkipListMap<>();
+   public ConcurrentSkipListMap<String, ConcurrentSkipListSet<User>> channelUsers = new ConcurrentSkipListMap<>();
    private ConcurrentHashMap<String, ArrayList<String>> channelMessages = new ConcurrentHashMap<>();
    private String currentChannel;
    private String nickname;
+   private String ID;
    private LinkedBlockingDeque<Sendable> messageHandlerQueue;
    private LinkedBlockingDeque<Sendable> senderQueue;
 
@@ -46,6 +48,12 @@ public class Client {
 
    public void kill() {
       isRunning = false;
+      try {
+         socket.close();
+
+      } catch (IOException e) {
+
+      }
 
    }
 
@@ -55,6 +63,14 @@ public class Client {
 
    public void setNickname(String nickname) {
       this.nickname = nickname;
+   }
+
+   public String getID() {
+      return ID;
+   }
+
+   public void setID(String ID) {
+      this.ID = ID;
    }
 
    public ConcurrentHashMap<String, ArrayList<String>> getChannelMessages() {

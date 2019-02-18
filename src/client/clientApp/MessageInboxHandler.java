@@ -4,6 +4,7 @@ import client.Controller;
 import javafx.application.Platform;
 import models.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -41,7 +42,18 @@ public class MessageInboxHandler extends Thread {
             Platform.runLater(() -> {
                switch (m.TYPE) {
                   case CHANNEL_MESSAGE: {
-                     String message = "\n" + m.TEXT_CONTENT;
+                     String user;
+                     if (m.SENDER.toString().equals(Client.getInstance().getID())) {
+                        user = "You: ";
+                     } else {
+                        user = "Someone: ";
+                        for (User u : Client.getInstance().channelUsers.get(m.CHANNEL)) {
+                           if (u.getID().toString().equals(m.SENDER.toString())) {
+                              user = u.getNickName() + ": ";
+                           }
+                        }
+                     }
+                     String message = "\n" + user + m.TEXT_CONTENT;
                      Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                      if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
                         controller.textArea.appendText(message);
@@ -49,11 +61,16 @@ public class MessageInboxHandler extends Thread {
                      break;
                   }
                   case JOIN_CHANNEL: {
-                     String message = "\n" + m.TEXT_CONTENT + " joined";
-                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
-                     if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                        controller.textArea.appendText(message);
-                     }
+                     Platform.runLater(() -> {
+                        String message = "\n" + m.TEXT_CONTENT + " joined";
+                        Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
+                        User user = new User(m.NICKNAME, m.SENDER);
+                        Client.getInstance().channelUsers.get(m.CHANNEL).add(user);
+                        if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                           controller.users.add(user);
+                           controller.textArea.appendText(message);
+                        }
+                     });
                      break;
                   }
                   case DISCONNECT: {
@@ -64,22 +81,25 @@ public class MessageInboxHandler extends Thread {
                      }
                      break;
                   }
+                  case CONNECT: {
+                     Client.getInstance().setNickname(m.NICKNAME);
+                     Client.getInstance().setID(m.SENDER.toString());
+                  }
                }
             });
          } else if (s instanceof Channel) {
-
-
             try {
                Platform.runLater(() -> {
                   controller.channels.add((Channel) s);
+                  ArrayList<String> messages = Client.getInstance().getChannelMessages().getOrDefault(((Channel) s).getName(), new ArrayList<>());
+                  Client.getInstance().getChannelMessages().put(((Channel) s).getName(), messages);
+                  Client.getInstance().channelUsers.put(((Channel) s).getName(), new ConcurrentSkipListSet<>(((Channel) s).getUsers()));
+                  if (controller.channels.size() == 1) {
+                     controller.users.addAll(((Channel) s).getUsers());
+                     controller.channelList.getSelectionModel().selectFirst();
+                     Client.getInstance().setCurrentChannel(((Channel) s).getName());
+                  }
                });
-               ArrayList<String> messages = Client.getInstance().getChannelMessages().getOrDefault(((Channel) s).getName(), new ArrayList<>());
-               Client.getInstance().getChannelMessages().put(((Channel) s).getName(), messages);
-               Client.getInstance().channelList.put(((Channel) s).getName(), new ConcurrentSkipListSet<>(((Channel) s).getUsers()));
-               if (controller.channels.size() == 1) {
-                  controller.channelList.getSelectionModel().selectFirst();
-                  Client.getInstance().setCurrentChannel(((Channel) s).getName());
-               }
             } catch (Exception e) {
 
             }

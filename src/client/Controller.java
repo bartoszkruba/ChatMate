@@ -8,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import models.*;
@@ -35,10 +34,14 @@ public class Controller {
    @FXML
    public ListView<Channel> channelList;
 
+   @FXML
+   public ListView<User> usersList;
+
    private LinkedBlockingDeque<Sendable> messageHandlerQueue;
    private LinkedBlockingDeque<Sendable> senderQueue;
 
    public ObservableList<Channel> channels;
+   public ObservableList<User> users;
 
    public void initialize() {
       client = Client.getInstance();
@@ -51,6 +54,7 @@ public class Controller {
       channels = FXCollections.observableArrayList();
 
       SortedList<Channel> sortedList = new SortedList<>(channels, Comparator.comparing(Channel::getName));
+
 
       channelList.setItems(sortedList);
       channelList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -65,6 +69,12 @@ public class Controller {
          }
       });
 
+
+      users = FXCollections.observableArrayList();
+
+      SortedList<User> userSortedList = new SortedList<>(users, Comparator.comparing(User::getNickName));
+
+      usersList.setItems(userSortedList);
    }
 
    @FXML

@@ -16,6 +16,11 @@ public class User implements Serializable, Comparable<User> {
       this.ID = UUID.randomUUID();
    }
 
+   public User(String nickName, UUID ID) {
+      this.ID = ID;
+      this.nickName = nickName;
+   }
+
    @Override
    public int hashCode() {
       return this.ID.hashCode() + 57;
@@ -48,6 +53,11 @@ public class User implements Serializable, Comparable<User> {
    }
 
    public String getNickName() {
+      return nickName;
+   }
+
+   @Override
+   public String toString() {
       return nickName;
    }
 }

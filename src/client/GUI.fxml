@@ -39,7 +39,7 @@
                 <Button text="Change"/>
             </HBox>
             <Label text="Users"/>
-            <ListView VBox.vgrow="ALWAYS">
+            <ListView fx:id="usersList" VBox.vgrow="ALWAYS">
             </ListView>
         </VBox>
     </right>

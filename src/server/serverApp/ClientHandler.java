@@ -49,7 +49,8 @@ public class ClientHandler implements Runnable {
       }
 
       Message m = new Message(MessageType.CONNECT);
-//      m.RECIVER = this.user.getID();
+      m.SENDER = this.user.getID();
+      m.NICKNAME = this.user.getNickName();
 
       this.userOutbox.add(m);
 

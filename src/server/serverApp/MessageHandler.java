@@ -83,10 +83,15 @@ public class MessageHandler implements Runnable {
       if (channel != null && userID != null) {
          User u = ActiveUserController.getInstance().getUser(userID);
          if (u != null) {
-            ActiveChannelController.getInstance().addUserToChannel(u, channel);
-            sendToUser(u, ActiveChannelController.getInstance().getChannel(channel));
-            m.TEXT_CONTENT = u.getNickName();
-            sendToChannel(m);
+            if (ActiveChannelController.getInstance().getChannel(channel) == null) {
+               ActiveChannelController.getInstance().addUserToChannel(u, channel);
+               sendToUser(u, ActiveChannelController.getInstance().getChannel(channel));
+            } else {
+               m.NICKNAME = u.getNickName();
+               sendToChannel(m);
+               ActiveChannelController.getInstance().addUserToChannel(u, channel);
+               sendToUser(u, ActiveChannelController.getInstance().getChannel(channel));
+            }
          }
       }
       System.out.println("Users connected to " + m.CHANNEL + ": " + ActiveChannelController.getInstance().getChannel(m.CHANNEL).getUsers().size());
