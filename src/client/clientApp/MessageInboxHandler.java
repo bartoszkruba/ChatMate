@@ -42,37 +42,60 @@ public class MessageInboxHandler extends Thread {
             Platform.runLater(() -> {
                switch (m.TYPE) {
                   case CHANNEL_MESSAGE: {
-                     String user;
-                     if (m.SENDER.toString().equals(Client.getInstance().getID())) {
-                        user = "You: ";
-                     } else {
-                        user = "Someone: ";
-                        for (User u : Client.getInstance().channelUsers.get(m.CHANNEL)) {
-                           if (u.getID().toString().equals(m.SENDER.toString())) {
-                              user = u.getNickName() + ": ";
+                     ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
+                     if (channel != null) {
+                        String user;
+                        if (m.SENDER.toString().equals(Client.getInstance().getID())) {
+                           user = "You: ";
+                        } else {
+                           user = "Someone: ";
+                           for (User u : Client.getInstance().channelUsers.get(m.CHANNEL)) {
+                              if (u.getID().toString().equals(m.SENDER.toString())) {
+                                 user = u.getNickName() + ": ";
+                              }
                            }
                         }
-                     }
-                     String message = "\n" + user + m.TEXT_CONTENT;
-                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
-                     if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                        controller.textArea.appendText(message);
+                        String message = "\n" + user + m.TEXT_CONTENT;
+                        channel.add(message);
+                        if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                           controller.textArea.appendText(message);
+                        }
                      }
                      break;
                   }
                   case JOIN_CHANNEL: {
                      Platform.runLater(() -> {
-                        String message = "\n" + m.NICKNAME + " joined";
-                        Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
-                        User user = new User(m.NICKNAME, m.SENDER);
-                        Client.getInstance().channelUsers.get(m.CHANNEL).add(user);
-                        if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                           controller.users.add(user);
-                           controller.textArea.appendText(message);
+                        ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
+                        if (channel != null) {
+                           String message = "\n" + m.NICKNAME + " joined";
+                           channel.add(message);
+                           User user = new User(m.NICKNAME, m.SENDER);
+                           Client.getInstance().channelUsers.get(m.CHANNEL).add(user);
+                           if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                              controller.users.add(user);
+                              controller.textArea.appendText(message);
+                           }
                         }
                      });
                      break;
                   }
+
+                  case LEAVE_CHANNEL: {
+                     {
+                        ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
+                        if (channel != null) {
+                           String message = "\n" + m.TEXT_CONTENT + " left";
+                           channel.add(message);
+                           Client.getInstance().channelUsers.get(m.CHANNEL).remove(new User("", m.SENDER));
+                           if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                              controller.users.remove(new User("", m.SENDER));
+                              controller.textArea.appendText(message);
+                           }
+                        }
+                        break;
+                     }
+                  }
+
                   case DISCONNECT: {
                      String message = "\n" + m.TEXT_CONTENT + " disconnected";
                      Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
