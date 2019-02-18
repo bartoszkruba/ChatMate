@@ -7,11 +7,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.util.Callback;
 import models.*;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -36,6 +40,9 @@ public class Controller {
 
    @FXML
    public ListView<User> usersList;
+
+   @FXML
+   private ContextMenu listContextMenu;
 
    private LinkedBlockingDeque<Sendable> messageHandlerQueue;
    private LinkedBlockingDeque<Sendable> senderQueue;
@@ -78,6 +85,41 @@ public class Controller {
 
       usersList.setItems(userSortedList);
       usersList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+      listContextMenu = new ContextMenu();
+      MenuItem deleteMenuItem = new MenuItem("Leave Channel");
+      deleteMenuItem.setOnAction((ActionEvent event) -> {
+         System.out.println("Leaving " + channelList.getSelectionModel().getSelectedItem().getName());
+      });
+
+      listContextMenu.getItems().addAll(deleteMenuItem);
+
+      channelList.setCellFactory(new Callback<ListView<Channel>, ListCell<Channel>>() {
+         @Override
+         public ListCell<Channel> call(ListView<Channel> param) {
+            ListCell<Channel> cell = new ListCell<>() {
+               @Override
+               protected void updateItem(Channel item, boolean empty) {
+                  super.updateItem(item, empty);
+                  if (empty) {
+                     setText(null);
+                  } else {
+                     setText(item.toString());
+                  }
+               }
+            };
+
+            cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
+               if (isNowEmpty) {
+                  cell.setContextMenu(null);
+               } else {
+                  cell.setContextMenu(listContextMenu);
+               }
+            });
+
+            return cell;
+         }
+      });
 
    }
 
