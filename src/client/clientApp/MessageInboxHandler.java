@@ -84,7 +84,7 @@ public class MessageInboxHandler extends Thread {
                      {
                         ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
                         if (channel != null) {
-                           String message = "\n" + m.TEXT_CONTENT + " left";
+                           String message = "\n" + m.NICKNAME + " left";
                            channel.add(message);
                            Client.getInstance().channelUsers.get(m.CHANNEL).remove(new User("", m.SENDER));
                            if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {

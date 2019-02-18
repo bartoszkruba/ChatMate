@@ -69,12 +69,15 @@ public class Controller {
       channelList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Channel>() {
          @Override
          public void changed(ObservableValue<? extends Channel> observable, Channel oldValue, Channel newValue) {
-            client.setCurrentChannel(newValue.getName());
-            textArea.clear();
-            client.getChannelMessages().get(newValue.getName()).forEach(textArea::appendText);
-
             users.clear();
-            users.addAll(Client.getInstance().channelUsers.get(newValue.getName()));
+
+            if (newValue != null) {
+               client.setCurrentChannel(newValue.getName());
+               textArea.clear();
+               client.getChannelMessages().get(newValue.getName()).forEach(textArea::appendText);
+
+               users.addAll(Client.getInstance().channelUsers.get(newValue.getName()));
+            }
          }
       });
 
@@ -89,7 +92,12 @@ public class Controller {
       listContextMenu = new ContextMenu();
       MenuItem deleteMenuItem = new MenuItem("Leave Channel");
       deleteMenuItem.setOnAction((ActionEvent event) -> {
-         System.out.println("Leaving " + channelList.getSelectionModel().getSelectedItem().getName());
+         Message message = new Message(MessageType.LEAVE_CHANNEL);
+         message.CHANNEL = channelList.getSelectionModel().getSelectedItem().getName();
+         this.senderQueue.add(message);
+         client.channelUsers.remove(channelList.getSelectionModel().getSelectedItem().getName());
+         client.getChannelMessages().remove(channelList.getSelectionModel().getSelectedItem().getName());
+         channels.remove(channelList.getSelectionModel().getSelectedItem());
       });
 
       listContextMenu.getItems().addAll(deleteMenuItem);
