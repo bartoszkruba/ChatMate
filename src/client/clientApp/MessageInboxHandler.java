@@ -62,7 +62,7 @@ public class MessageInboxHandler extends Thread {
                   }
                   case JOIN_CHANNEL: {
                      Platform.runLater(() -> {
-                        String message = "\n" + m.TEXT_CONTENT + " joined";
+                        String message = "\n" + m.NICKNAME + " joined";
                         Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
                         User user = new User(m.NICKNAME, m.SENDER);
                         Client.getInstance().channelUsers.get(m.CHANNEL).add(user);
@@ -76,7 +76,11 @@ public class MessageInboxHandler extends Thread {
                   case DISCONNECT: {
                      String message = "\n" + m.TEXT_CONTENT + " disconnected";
                      Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
+                     Client.getInstance().channelUsers.forEach((key, value) -> {
+                        value.remove(new User("", m.SENDER));
+                     });
                      if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                        controller.users.remove(new User("", m.SENDER));
                         controller.textArea.appendText(message);
                      }
                      break;
