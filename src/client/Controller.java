@@ -59,13 +59,15 @@ public class Controller {
       channelList.setItems(sortedList);
       channelList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-
       channelList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Channel>() {
          @Override
          public void changed(ObservableValue<? extends Channel> observable, Channel oldValue, Channel newValue) {
             client.setCurrentChannel(newValue.getName());
             textArea.clear();
             client.getChannelMessages().get(newValue.getName()).forEach(textArea::appendText);
+
+            users.clear();
+            users.addAll(Client.getInstance().channelUsers.get(newValue.getName()));
          }
       });
 
@@ -75,6 +77,8 @@ public class Controller {
       SortedList<User> userSortedList = new SortedList<>(users, Comparator.comparing(User::getNickName));
 
       usersList.setItems(userSortedList);
+      usersList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
    }
 
    @FXML
