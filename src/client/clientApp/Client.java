@@ -32,7 +32,7 @@ public class Client {
 
    private Client() {
       try {
-         socket = new Socket("192.168.10.153", 54321);
+         socket = new Socket("localhost", 54321);
          isRunning = true;
          sender = new Sender(socket);
          reciever = new Receiver(socket);

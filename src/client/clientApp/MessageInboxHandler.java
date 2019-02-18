@@ -1,6 +1,7 @@
 package client.clientApp;
 
 import client.Controller;
+import javafx.application.Platform;
 import models.*;
 
 import java.util.ArrayList;
@@ -37,35 +38,41 @@ public class MessageInboxHandler extends Thread {
          Sendable s = messages.removeFirst();
          if (s instanceof Message) {
             Message m = (Message) s;
-            switch (m.TYPE) {
-               case CHANNEL_MESSAGE: {
-                  String message = "\n" + m.TEXT_CONTENT;
-                  Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
-                  if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                     controller.textArea.appendText(message);
+            Platform.runLater(() -> {
+               switch (m.TYPE) {
+                  case CHANNEL_MESSAGE: {
+                     String message = "\n" + m.TEXT_CONTENT;
+                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
+                     if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                        controller.textArea.appendText(message);
+                     }
+                     break;
                   }
-                  break;
-               }
-               case JOIN_CHANNEL: {
-                  String message = "\n" + m.TEXT_CONTENT + " joined";
-                  Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
-                  if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                     controller.textArea.appendText(message);
+                  case JOIN_CHANNEL: {
+                     String message = "\n" + m.TEXT_CONTENT + " joined";
+                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
+                     if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                        controller.textArea.appendText(message);
+                     }
+                     break;
                   }
-                  break;
-               }
-               case DISCONNECT: {
-                  String message = "\n" + m.TEXT_CONTENT + " disconnected";
-                  Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
-                  if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                     controller.textArea.appendText(message);
+                  case DISCONNECT: {
+                     String message = "\n" + m.TEXT_CONTENT + " disconnected";
+                     Client.getInstance().getChannelMessages().get(m.CHANNEL).add(message);
+                     if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+                        controller.textArea.appendText(message);
+                     }
+                     break;
                   }
-                  break;
                }
-            }
+            });
          } else if (s instanceof Channel) {
+
+
             try {
-               controller.channels.add((Channel) s);
+               Platform.runLater(() -> {
+                  controller.channels.add((Channel) s);
+               });
                ArrayList<String> messages = Client.getInstance().getChannelMessages().getOrDefault(((Channel) s).getName(), new ArrayList<>());
                Client.getInstance().getChannelMessages().put(((Channel) s).getName(), messages);
                Client.getInstance().channelList.put(((Channel) s).getName(), new ConcurrentSkipListSet<>(((Channel) s).getUsers()));
@@ -73,7 +80,7 @@ public class MessageInboxHandler extends Thread {
                   controller.channelList.getSelectionModel().selectFirst();
                   Client.getInstance().setCurrentChannel(((Channel) s).getName());
                }
-            } catch (IllegalStateException e) {
+            } catch (Exception e) {
 
             }
          }

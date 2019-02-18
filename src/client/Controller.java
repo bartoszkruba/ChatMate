@@ -55,6 +55,7 @@ public class Controller {
       channelList.setItems(sortedList);
       channelList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
+
       channelList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Channel>() {
          @Override
          public void changed(ObservableValue<? extends Channel> observable, Channel oldValue, Channel newValue) {

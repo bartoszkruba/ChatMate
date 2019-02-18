@@ -62,7 +62,6 @@ public class MessageHandler implements Runnable {
       if (m.CHANNEL == null || m.CHANNEL.equals("")) {
          return;
       }
-      System.out.println("Sending message to channel " + m.CHANNEL);
       Channel channel = ActiveChannelController.getInstance().getChannel(m.CHANNEL);
       if (channel != null) {
          SortedSet<User> users = channel.getUsers();
