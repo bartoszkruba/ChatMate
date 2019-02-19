@@ -128,13 +128,20 @@ public class MessageHandler implements Runnable {
          user.setNickName(message.NICKNAME);
 
          String[] userChannels = ActiveChannelController.getInstance().getChannelsForUser(user);
-         Message m = new Message(MessageType.NICKNAME_CHANGE);
-         m.SENDER = user.getID();
-         m.NICKNAME = user.getNickName();
-         Stream.of(userChannels).forEach(c -> {
-            sendToChannel(m);
-         });
-         sendToUser(user, m);
+         if (userChannels.length > 0) {
+            Stream.of(userChannels).forEach(c -> {
+               Message m = new Message(MessageType.NICKNAME_CHANGE);
+               m.CHANNEL = c;
+               m.SENDER = user.getID();
+               m.NICKNAME = user.getNickName();
+               sendToChannel(m);
+            });
+         } else {
+            Message m = new Message(MessageType.NICKNAME_CHANGE);
+            m.SENDER = user.getID();
+            m.NICKNAME = user.getNickName();
+            sendToUser(user, m);
+         }
       }
    }
 

@@ -4,7 +4,6 @@ import client.Controller;
 import javafx.application.Platform;
 import models.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -41,45 +40,12 @@ public class MessageInboxHandler extends Thread {
             Message m = (Message) s;
             Platform.runLater(() -> {
                switch (m.TYPE) {
-                  case CHANNEL_MESSAGE: {
-                     ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
-                     if (channel != null) {
-                        String user;
-                        if (m.SENDER.toString().equals(Client.getInstance().getID())) {
-                           user = "You: ";
-                        } else {
-                           user = "Someone: ";
-                           for (User u : Client.getInstance().channelUsers.get(m.CHANNEL)) {
-                              if (u.getID().toString().equals(m.SENDER.toString())) {
-                                 user = u.getNickName() + ": ";
-                              }
-                           }
-                        }
-                        String message = "\n" + user + m.TEXT_CONTENT;
-                        channel.add(message);
-                        if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                           controller.textArea.appendText(message);
-                        }
-                     }
+                  case CHANNEL_MESSAGE:
+                     processCHANNEL_MESSAGE(m);
                      break;
-                  }
-                  case JOIN_CHANNEL: {
-                     Platform.runLater(() -> {
-                        ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
-                        if (channel != null) {
-                           String message = "\n" + m.NICKNAME + " joined";
-                           channel.add(message);
-                           User user = new User(m.NICKNAME, m.SENDER);
-                           Client.getInstance().channelUsers.get(m.CHANNEL).add(user);
-                           if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
-                              controller.users.add(user);
-                              controller.textArea.appendText(message);
-                           }
-                        }
-                     });
+                  case JOIN_CHANNEL:
+                     processJOIN_CHANNEL(m);
                      break;
-                  }
-
                   case LEAVE_CHANNEL: {
                      {
                         ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
@@ -113,6 +79,10 @@ public class MessageInboxHandler extends Thread {
                      Client.getInstance().setID(m.SENDER.toString());
                   }
                   case NICKNAME_CHANGE: {
+
+                     System.out.println("NICKNAME_CHANGE");
+                     System.out.println(m.NICKNAME);
+
                      if (Client.getInstance().getID().equals(m.SENDER.toString())) {
                         Client.getInstance().setNickname(m.NICKNAME);
                      }
@@ -124,10 +94,12 @@ public class MessageInboxHandler extends Thread {
                         controller.users.remove(i);
                         controller.users.add(user);
                      }
+
                      Client.getInstance().channelUsers.values().forEach(v -> {
                         v.remove(user);
                         v.add(user);
                      });
+
                   }
                }
             });
@@ -149,5 +121,43 @@ public class MessageInboxHandler extends Thread {
             }
          }
       }
+   }
+
+   private void processCHANNEL_MESSAGE(Message m) {
+      ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
+      if (channel != null) {
+         String user;
+         if (m.SENDER.toString().equals(Client.getInstance().getID())) {
+            user = "You: ";
+         } else {
+            user = "Someone: ";
+            for (User u : Client.getInstance().channelUsers.get(m.CHANNEL)) {
+               if (u.getID().toString().equals(m.SENDER.toString())) {
+                  user = u.getNickName() + ": ";
+               }
+            }
+         }
+         String message = "\n" + user + m.TEXT_CONTENT;
+         channel.add(message);
+         if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+            controller.textArea.appendText(message);
+         }
+      }
+   }
+
+   private void processJOIN_CHANNEL(Message m) {
+      Platform.runLater(() -> {
+         ArrayList<String> channel = Client.getInstance().getChannelMessages().get(m.CHANNEL);
+         if (channel != null) {
+            String message = "\n" + m.NICKNAME + " joined";
+            channel.add(message);
+            User user = new User(m.NICKNAME, m.SENDER);
+            Client.getInstance().channelUsers.get(m.CHANNEL).add(user);
+            if (m.CHANNEL.equals(Client.getInstance().getCurrentChannel())) {
+               controller.users.add(user);
+               controller.textArea.appendText(message);
+            }
+         }
+      });
    }
 }
