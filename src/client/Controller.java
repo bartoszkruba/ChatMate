@@ -44,6 +44,9 @@ public class Controller {
    @FXML
    private ContextMenu listContextMenu;
 
+   @FXML
+   private TextField nicknameChangeField;
+
    private LinkedBlockingDeque<Sendable> messageHandlerQueue;
    private LinkedBlockingDeque<Sendable> senderQueue;
 
@@ -167,6 +170,24 @@ public class Controller {
    private void handleKeyPresseddOnChattField(KeyEvent e) {
       if (e.getCode().toString().equals("ENTER")) {
          sendButtonPressed();
+      }
+   }
+
+   @FXML
+   private void changeNickname() {
+      String newNickname = nicknameChangeField.getText().trim();
+      if (!newNickname.equals("")) {
+         nicknameChangeField.setText(newNickname);
+         Message message = new Message(MessageType.NICKNAME_CHANGE);
+         message.NICKNAME = newNickname;
+         senderQueue.add(message);
+      }
+   }
+
+   @FXML
+   private void keyPressedOnChangeNickNameField(KeyEvent e) {
+      if (e.getCode().toString().equals("ENTER")) {
+         changeNickname();
       }
    }
 

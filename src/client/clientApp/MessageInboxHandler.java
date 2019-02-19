@@ -112,6 +112,23 @@ public class MessageInboxHandler extends Thread {
                      Client.getInstance().setNickname(m.NICKNAME);
                      Client.getInstance().setID(m.SENDER.toString());
                   }
+                  case NICKNAME_CHANGE: {
+                     if (Client.getInstance().getID().equals(m.SENDER.toString())) {
+                        Client.getInstance().setNickname(m.NICKNAME);
+                     }
+
+                     User user = new User(m.NICKNAME, m.SENDER);
+                     int i = controller.users.indexOf(user);
+
+                     if (i >= 0) {
+                        controller.users.remove(i);
+                        controller.users.add(user);
+                     }
+                     Client.getInstance().channelUsers.values().forEach(v -> {
+                        v.remove(user);
+                        v.add(user);
+                     });
+                  }
                }
             });
          } else if (s instanceof Channel) {

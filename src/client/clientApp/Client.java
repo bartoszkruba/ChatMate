@@ -1,6 +1,5 @@
 package client.clientApp;
 
-import models.Message;
 import models.Sendable;
 import models.User;
 
@@ -49,6 +48,7 @@ public class Client {
    public void kill() {
       isRunning = false;
       try {
+         if(socket != null )
          socket.close();
 
       } catch (IOException e) {

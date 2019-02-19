@@ -56,6 +56,10 @@ public class User implements Serializable, Comparable<User> {
       return nickName;
    }
 
+   public void setNickName(String nickName) {
+      this.nickName = nickName;
+   }
+
    @Override
    public String toString() {
       return nickName;

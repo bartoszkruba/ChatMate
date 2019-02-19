@@ -35,8 +35,9 @@
             </BorderPane.margin>
             <Label text="Change name"/>
             <HBox>
-                <TextField HBox.hgrow="ALWAYS"/>
-                <Button text="Change"/>
+                <TextField HBox.hgrow="ALWAYS" fx:id="nicknameChangeField"
+                           onKeyPressed="#keyPressedOnChangeNickNameField"/>
+                <Button text="Change" onAction="#changeNickname"/>
             </HBox>
             <Label text="Users"/>
             <ListView fx:id="usersList" VBox.vgrow="ALWAYS">

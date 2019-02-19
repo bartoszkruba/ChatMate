@@ -1,15 +1,13 @@
 package server.serverApp;
 
 
-import models.Channel;
-import models.Message;
-import models.Sendable;
-import models.User;
+import models.*;
 
 import java.util.SortedSet;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Stream;
 
 public class MessageHandler implements Runnable {
 
@@ -54,6 +52,10 @@ public class MessageHandler implements Runnable {
                break;
             case WHISPER_MESSAGE:
                sendToUser(m);
+               break;
+            case NICKNAME_CHANGE:
+               changeNickname(m);
+               break;
          }
       }
    }
@@ -117,6 +119,23 @@ public class MessageHandler implements Runnable {
 
    private void sendToUser(User u, Sendable s) {
       ActiveUserController.getInstance().getUserOutbox(u).add(s);
+   }
+
+   private void changeNickname(Message message) {
+      User user = ActiveUserController.getInstance().getUser(message.SENDER);
+
+      if (user != null) {
+         user.setNickName(message.NICKNAME);
+
+         String[] userChannels = ActiveChannelController.getInstance().getChannelsForUser(user);
+         Message m = new Message(MessageType.NICKNAME_CHANGE);
+         m.SENDER = user.getID();
+         m.NICKNAME = user.getNickName();
+         Stream.of(userChannels).forEach(c -> {
+            sendToChannel(m);
+         });
+         sendToUser(user, m);
+      }
    }
 
 }
