@@ -1,15 +1,13 @@
 package server.serverApp;
 
-import models.Message;
-import models.MessageType;
-import models.Sendable;
-import models.User;
+import models.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
@@ -34,8 +32,6 @@ public class ClientHandler implements Runnable {
       this.messageHandlerQueue = messageHandlerQueue;
 
       ActiveUserController.getInstance().addUser(this.user, this.userOutbox);
-      System.out.println("All connected users: " + ActiveUserController.getInstance().getUsers().size());
-
       try {
          streamIn = new ObjectInputStream(socket.getInputStream());
          streamOut = new ObjectOutputStream(socket.getOutputStream());
@@ -66,6 +62,7 @@ public class ClientHandler implements Runnable {
             message.SENDER = this.user.getID();
             // System.out.println(message);//Debug
             messageHandlerQueue.add(message);
+            streamOut.reset();
          }
       } catch (SocketTimeoutException e) {
       } catch (IOException e) {
@@ -86,6 +83,15 @@ public class ClientHandler implements Runnable {
          if (clientHasMessages()) {
             Sendable m = this.userOutbox.getFirst();
             try {
+
+               if (m instanceof Channel) {
+                  Channel channel = (Channel) m;
+                  System.out.println(channel.getName());
+                  channel.getUsers().forEach(user -> {
+                     System.out.println(user.getNickName());
+                  });
+               }
+
                streamOut.writeObject(m);
 
                // TODO: 2019-02-17 Bug - Removing first message from stack is not always right should check index instead
@@ -119,7 +125,6 @@ public class ClientHandler implements Runnable {
       cleanUpAfterUser();
       this.isRunning = false;
       System.out.println("Connection to " + socket.getInetAddress() + " lost");
-      System.out.println("All connected users: " + ActiveUserController.getInstance().getUsers().size());
    }
 
    private void cleanUpAfterUser() {

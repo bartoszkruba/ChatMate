@@ -104,16 +104,23 @@ public class MessageInboxHandler extends Thread {
                }
             });
          } else if (s instanceof Channel) {
+            Channel channel = (Channel) s;
+
+            System.out.println(channel.getName());
+            channel.getUsers().forEach(u -> {
+               System.out.println(u.getNickName());
+            });
+
             try {
                Platform.runLater(() -> {
-                  controller.channels.add((Channel) s);
-                  ArrayList<String> messages = Client.getInstance().getChannelMessages().getOrDefault(((Channel) s).getName(), new ArrayList<>());
+                  controller.channels.add(channel);
+                  ArrayList<String> messages = Client.getInstance().getChannelMessages().getOrDefault(channel.getName(), new ArrayList<>());
                   Client.getInstance().getChannelMessages().put(((Channel) s).getName(), messages);
-                  Client.getInstance().channelUsers.put(((Channel) s).getName(), new ConcurrentSkipListSet<>(((Channel) s).getUsers()));
+                  Client.getInstance().channelUsers.put(((Channel) s).getName(), new ConcurrentSkipListSet<>((channel).getUsers()));
                   if (controller.channels.size() == 1) {
-                     controller.users.addAll(((Channel) s).getUsers());
+                     controller.users.addAll((channel).getUsers());
                      controller.channelList.getSelectionModel().selectFirst();
-                     Client.getInstance().setCurrentChannel(((Channel) s).getName());
+                     Client.getInstance().setCurrentChannel((channel).getName());
                   }
                });
             } catch (Exception e) {

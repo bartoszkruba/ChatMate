@@ -22,7 +22,6 @@ public class Channel implements Comparable<Channel>, Sendable, Serializable {
       return Collections.unmodifiableSortedSet(this.users);
    }
 
-
    public void setName(String name) {
       this.name = name;
    }
@@ -35,7 +34,6 @@ public class Channel implements Comparable<Channel>, Sendable, Serializable {
       return this.users.remove(user);
    }
 
-   // TODO: 2019-02-14 Implement getSorted method
 
    @Override
    public boolean equals(Object obj) {

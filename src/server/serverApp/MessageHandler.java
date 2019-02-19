@@ -96,7 +96,7 @@ public class MessageHandler implements Runnable {
             }
          }
       }
-      System.out.println("Users connected to " + m.CHANNEL + ": " + ActiveChannelController.getInstance().getChannel(m.CHANNEL).getUsers().size());
+
    }
 
    private void removeUserFromChannel(Message m) {
